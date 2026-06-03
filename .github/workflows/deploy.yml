@@ -3,7 +3,7 @@ name: Deploy BookStack to Azure CI/CD
 on:
   push:
     branches:
-      - pso
+      - PSO 
 
 jobs:
   build-and-deploy:
@@ -20,6 +20,16 @@ jobs:
 
       - name: Install PHP Dependencies (CI)
         run: composer install --no-dev --optimize-autoloader
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Frontend Assets
+        run: |
+          npm install
+          npm run build
 
       - name: Package Application for Deployment
         run: zip -r release.zip . -x "*.git*" "tests/*" "node_modules/*"
