@@ -3,7 +3,7 @@ name: Deploy BookStack to Azure CI/CD
 on:
   push:
     branches:
-      - PSO 
+      - pso
 
 jobs:
   # ==========================================
