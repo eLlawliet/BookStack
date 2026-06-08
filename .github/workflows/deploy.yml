@@ -6,7 +6,7 @@ on:
       - pso
 
 jobs:
-  # ==========================================
+# ==========================================
   # CONTINUOUS INTEGRATION (CI)
   # ==========================================
   ci-testing:
@@ -17,8 +17,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: bookstack_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: bookstack-test
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_USER: bookstack-test
+          MYSQL_PASSWORD: secret
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -42,13 +44,6 @@ jobs:
           php artisan key:generate
 
       - name: Execute Tests (Blocks CD if failed)
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: bookstack_test
-          DB_USERNAME: root
-          DB_PASSWORD: ""
         run: php artisan test
 
   # ==========================================
