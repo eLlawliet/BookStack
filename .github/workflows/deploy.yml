@@ -15,7 +15,7 @@ jobs:
     
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
           MYSQL_DATABASE: bookstack-test
           MYSQL_ROOT_PASSWORD: secret
@@ -51,8 +51,7 @@ jobs:
         run: |
           for i in {1..30}; do
             if nc -z 127.0.0.1 3306; then
-              echo "MySQL network is open!"
-              sleep 5 
+              echo "MySQL is ready"
               exit 0
             fi
             echo "Waiting for MySQL... ($i/30)"
@@ -62,14 +61,8 @@ jobs:
 
       - name: Execute Tests (Blocks CD if failed)
         env:
-          DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: bookstack-test
-          DB_USERNAME: root
-          DB_PASSWORD: secret
         run: php artisan test
-
   # ==========================================
   # CONTINUOUS DEPLOYMENT (CD)
   # ==========================================
