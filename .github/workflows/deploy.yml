@@ -43,11 +43,12 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_HOST=localhost" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=bookstack-test" >> .env
           echo "DB_USERNAME=bookstack-test" >> .env
           echo "DB_PASSWORD=secret" >> .env
+          echo "DB_DRIVER=mysql" >> .env
 
       - name: Execute Tests (Blocks CD if failed)
         run: php artisan test
