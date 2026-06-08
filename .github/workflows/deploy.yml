@@ -23,7 +23,12 @@ jobs:
           MYSQL_PASSWORD: secret
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          --bind-address=0.0.0.0
 
     steps:
       - name: Checkout Repository
@@ -43,7 +48,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_HOST=mysql" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=bookstack-test" >> .env
           echo "DB_USERNAME=bookstack-test" >> .env
