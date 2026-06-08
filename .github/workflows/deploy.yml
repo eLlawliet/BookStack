@@ -12,6 +12,17 @@ jobs:
   ci-testing:
     name: Run Automated Tests
     runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: bookstack_test
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -20,7 +31,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip, sqlite3
+          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
 
       - name: Install Dependencies
         run: composer install
@@ -32,9 +43,12 @@ jobs:
 
       - name: Execute Tests (Blocks CD if failed)
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
-        # Notice we removed "|| true" so a failure here will properly stop the pipeline!
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: bookstack_test
+          DB_USERNAME: root
+          DB_PASSWORD: ""
         run: php artisan test
 
   # ==========================================
