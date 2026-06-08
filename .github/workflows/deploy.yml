@@ -3,10 +3,14 @@ name: Deploy BookStack to Azure CI/CD
 on:
   push:
     branches:
-      - pso 
+      - PSO 
 
 jobs:
-  build-and-deploy:
+  # ==========================================
+  # CONTINUOUS INTEGRATION (CI)
+  # ==========================================
+  ci-testing:
+    name: Run Automated Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -16,10 +20,50 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
+          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip, sqlite3
 
-      - name: Install PHP Dependencies (CI)
-        run: composer install --no-dev --optimize-autoloader
+      - name: Install Dependencies
+        run: composer install
+
+      - name: Prepare Test Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Execute Tests (Blocks CD if failed)
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
+        # Notice we removed "|| true" so a failure here will properly stop the pipeline!
+        run: php artisan test
+
+  # ==========================================
+  # CONTINUOUS DEPLOYMENT (CD)
+  # ==========================================
+  cd-deployment:
+    name: Deploy to Azure
+    needs: ci-testing
+    if: always() # Forces the CD job to wake up even if CI fails
+    runs-on: ubuntu-latest
+    steps:
+      # 👇 The Lab Assistant's Custom Error Gatekeeper 👇
+      - name: Verify CI Passed
+        run: |
+          if [ "${{ needs.ci-testing.result }}" != "success" ]; then
+            echo "❌ ERROR: Continuous Integration (CI) tests failed!"
+            echo "🛑 Aborting Continuous Deployment (CD) to protect the live server."
+            exit 1
+          fi
+          echo "✅ CI passed! Proceeding with deployment..."
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,10 +75,13 @@ jobs:
           npm install
           npm run build
 
-      - name: Package Application for Deployment
+      - name: Optimize for Production
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Package Application
         run: zip -r release.zip . -x "*.git*" "tests/*" "node_modules/*"
 
-      - name: Deploy to Azure App Service (CD)
+      - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'bookstack-project-pso'
