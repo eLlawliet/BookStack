@@ -43,7 +43,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=localhost" >> .env
+          echo "DB_HOST=mysql" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=bookstack-test" >> .env
           echo "DB_USERNAME=bookstack-test" >> .env
@@ -62,7 +62,6 @@ jobs:
     if: always() # Forces the CD job to wake up even if CI fails
     runs-on: ubuntu-latest
     steps:
-      # 👇 The Lab Assistant's Custom Error Gatekeeper 👇
       - name: Verify CI Passed
         run: |
           if [ "${{ needs.ci-testing.result }}" != "success" ]; then
