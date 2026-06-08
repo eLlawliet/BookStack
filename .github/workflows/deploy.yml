@@ -46,7 +46,7 @@ jobs:
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=bookstack-test" >> .env
-          echo "DB_USERNAME=root" >> .env
+          echo "DB_USERNAME=bookstack-test" >> .env
           echo "DB_PASSWORD=secret" >> .env
 
       - name: Execute Tests (Blocks CD if failed)
