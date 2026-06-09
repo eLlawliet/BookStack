@@ -86,16 +86,17 @@ jobs:
       - name: Execute Tests
         env:
           APP_ENV: testing
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: bookstack-test
-          DB_USERNAME: bookstack-test
-          DB_PASSWORD: secret
+
+          DB_CONNECTION: mysql_testing
+
+          MYSQL_USER: bookstack-test
+          MYSQL_PASSWORD: secret
+
           CACHE_DRIVER: array
           SESSION_DRIVER: array
           QUEUE_CONNECTION: sync
-        run: vendor/bin/phpunit --stop-on-failure --testdox
+
+        run: vendor/bin/phpunit --stop-on-failure
   # ==========================================
   # CONTINUOUS DEPLOYMENT (CD)
   # ==========================================
