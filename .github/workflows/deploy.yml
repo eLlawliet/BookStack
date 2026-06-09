@@ -88,6 +88,16 @@ jobs:
         run: |
           php artisan migrate:fresh --seed --force
 
+      - name: Debug PHPUnit Environment
+        run: |
+          php artisan tinker --execute="
+          dump(env('APP_KEY'));
+          dump(config('app.key'));
+          dump(config('database.default'));
+          dump(config('database.connections.mysql_testing'));
+          "
+
+
       - name: Execute Tests
         env:
           APP_ENV: testing
