@@ -46,6 +46,7 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          php artisan config:clear
 
       - name: Wait for MySQL
         run: |
@@ -59,9 +60,34 @@ jobs:
           done
           exit 1
 
-      - name: Execute Tests (Blocks CD if failed)
+      - name: Run Database Migrations
         env:
+          DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: bookstack-test
+          DB_USERNAME: bookstack-test
+          DB_PASSWORD: secret
+        run: php artisan migrate --force
+
+      - name: Clear Laravel Cache (safety step)
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+
+      - name: Execute Tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: bookstack-test
+          DB_USERNAME: bookstack-test
+          DB_PASSWORD: secret
+          CACHE_DRIVER: array
+          SESSION_DRIVER: array
+          QUEUE_CONNECTION: sync
         run: php artisan test
   # ==========================================
   # CONTINUOUS DEPLOYMENT (CD)
