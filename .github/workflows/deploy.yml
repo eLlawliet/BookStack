@@ -76,6 +76,13 @@ jobs:
           php artisan cache:clear
           php artisan route:clear
 
+      - name: Hard Reset Laravel Runtime
+        run: |
+          php artisan optimize:clear
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+
       - name: Execute Tests
         env:
           APP_ENV: testing
