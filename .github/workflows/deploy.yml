@@ -9,94 +9,97 @@ jobs:
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
   # ==========================================
-  ci-testing:
-    name: Run Automated Tests
-    runs-on: ubuntu-latest
-    
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DATABASE: bookstack-test
-          MYSQL_ROOT_PASSWORD: secret
-          MYSQL_USER: bookstack-test
-          MYSQL_PASSWORD: secret
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+ci-testing:
+  name: Run Automated Tests
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+  services:
+    mysql:
+      image: mysql:5.7
+      env:
+        MYSQL_DATABASE: bookstack-test
+        MYSQL_ROOT_PASSWORD: secret
+        MYSQL_USER: bookstack-test
+        MYSQL_PASSWORD: secret
+      ports:
+        - 3306:3306
+      options: >-
+        --health-cmd="mysqladmin ping"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=10
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: composer install
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
 
-      - name: Prepare Test Environment
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
+    - name: Install Dependencies
+      run: composer install --no-interaction --prefer-dist
 
-      - name: Wait for MySQL
-        run: |
-          for i in {1..30}; do
-            if nc -z 127.0.0.1 3306; then
-              echo "MySQL is ready"
-              exit 0
-            fi
-            echo "Waiting for MySQL... ($i/30)"
-            sleep 1
-          done
-          exit 1
+    - name: Prepare Environment
+      run: |
+        cp .env.example .env
 
-      - name: Run Database Migrations
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: bookstack-test
-          DB_USERNAME: bookstack-test
-          DB_PASSWORD: secret
-        run: php artisan migrate:fresh --seed --force
+        php artisan key:generate
 
-      - name: Clear Laravel Cache (safety step)
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan route:clear
+        echo "APP_ENV=testing" >> .env
 
-      - name: Hard Reset Laravel Runtime
-        run: |
-          php artisan optimize:clear
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan route:clear
+        echo "DB_CONNECTION=mysql_testing" >> .env
 
-      - name: Execute Tests
-        env:
-          APP_ENV: testing
+        echo "MYSQL_USER=bookstack-test" >> .env
+        echo "MYSQL_PASSWORD=secret" >> .env
 
-          DB_CONNECTION: mysql_testing
+        php artisan config:clear
+        php artisan cache:clear
 
-          MYSQL_USER: bookstack-test
-          MYSQL_PASSWORD: secret
+    - name: Wait for MySQL
+      run: |
+        for i in {1..60}; do
+          if mysql -h 127.0.0.1 -u bookstack-test -psecret -e "SELECT 1" >/dev/null 2>&1; then
+            echo "MySQL ready"
+            exit 0
+          fi
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+        exit 1
 
-          CACHE_DRIVER: array
-          SESSION_DRIVER: array
-          QUEUE_CONNECTION: sync
+    - name: Debug Database Connection
+      env:
+        DB_CONNECTION: mysql_testing
+        MYSQL_USER: bookstack-test
+        MYSQL_PASSWORD: secret
+      run: |
+        php artisan tinker --execute="
+        dump(config('database.connections.mysql_testing'));
+        "
 
-        run: vendor/bin/phpunit --stop-on-failure
+    - name: Run Migrations
+      env:
+        DB_CONNECTION: mysql_testing
+        MYSQL_USER: bookstack-test
+        MYSQL_PASSWORD: secret
+      run: |
+        php artisan migrate:fresh --seed --force
+
+    - name: Execute Tests
+      env:
+        APP_ENV: testing
+        DB_CONNECTION: mysql_testing
+
+        MYSQL_USER: bookstack-test
+        MYSQL_PASSWORD: secret
+
+        CACHE_DRIVER: array
+        SESSION_DRIVER: array
+        QUEUE_CONNECTION: sync
+      run: vendor/bin/phpunit --stop-on-failure
   # ==========================================
   # CONTINUOUS DEPLOYMENT (CD)
   # ==========================================
