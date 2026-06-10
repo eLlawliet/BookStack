@@ -15,7 +15,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_DATABASE: bookstack-test
           MYSQL_ROOT_PASSWORD: secret
@@ -45,13 +45,13 @@ jobs:
       - name: Prepare Environment
         run: |
           cp .env.example .env
-
-          php artisan key:generate
-
+          
+          # Generate the key and immediately export it to GitHub ENV variables
+          APP_KEY=$(php artisan key:generate --show --no-ansi)
+          echo "APP_KEY=$APP_KEY" >> $GITHUB_ENV
+          
           echo "APP_ENV=testing" >> .env
-
           echo "DB_CONNECTION=mysql_testing" >> .env
-
           echo "MYSQL_USER=bookstack-test" >> .env
           echo "MYSQL_PASSWORD=secret" >> .env
 
@@ -70,42 +70,25 @@ jobs:
           done
           exit 1
 
-      - name: Debug Database Connection
+      - name: Run Migrations & Seeders
         env:
           DB_CONNECTION: mysql_testing
           MYSQL_USER: bookstack-test
           MYSQL_PASSWORD: secret
         run: |
-          php artisan tinker --execute="
-          dump(config('database.connections.mysql_testing'));
-          "
-
-      - name: Run Migrations
-        env:
-          DB_CONNECTION: mysql_testing
-          MYSQL_USER: bookstack-test
-          MYSQL_PASSWORD: secret
-        run: |
+          # Run standard migrations
           php artisan migrate:fresh --seed --force
-
-      - name: Debug PHPUnit Environment
-        run: |
-          php artisan tinker --execute="
-          dump(env('APP_KEY'));
-          dump(config('app.key'));
-          dump(config('database.default'));
-          dump(config('database.connections.mysql_testing'));
-          "
-
+          
+          # Run the dummy seeder required by the test suite
+          php artisan db:seed --class=DummyContentSeeder --force
 
       - name: Execute Tests
         env:
           APP_ENV: testing
+          APP_KEY: ${{ env.APP_KEY }}
           DB_CONNECTION: mysql_testing
-
           MYSQL_USER: bookstack-test
           MYSQL_PASSWORD: secret
-
           CACHE_DRIVER: array
           SESSION_DRIVER: array
           QUEUE_CONNECTION: sync
@@ -116,7 +99,7 @@ jobs:
   cd-deployment:
     name: Deploy to Azure
     needs: ci-testing
-    if: always() # Forces the CD job to wake up even if CI fails
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Verify CI Passed
