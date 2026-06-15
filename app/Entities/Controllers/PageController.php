@@ -152,6 +152,7 @@ class PageController extends Controller
         $pageContent = (new PageContent($page));
         $page->html = $pageContent->render();
         $pageNav = $pageContent->getNavigation($page->html);
+        $readingTimeMinutes = $this->estimateReadingTimeMinutes($page->html);
 
         $sidebarTree = (new BookContents($page->book))->getTree();
         $commentTree = (new CommentTree($page));
@@ -166,12 +167,21 @@ class PageController extends Controller
             'current'         => $page,
             'sidebarTree'     => $sidebarTree,
             'commentTree'     => $commentTree,
-            'pageNav'         => $pageNav,
-            'watchOptions'    => new UserEntityWatchOptions(user(), $page),
-            'next'            => $nextPreviousLocator->getNext(),
-            'previous'        => $nextPreviousLocator->getPrevious(),
-            'referenceCount'  => $this->referenceFetcher->getReferenceCountToEntity($page),
+            'pageNav'            => $pageNav,
+            'readingTimeMinutes' => $readingTimeMinutes,
+            'watchOptions'       => new UserEntityWatchOptions(user(), $page),
+            'next'               => $nextPreviousLocator->getNext(),
+            'previous'           => $nextPreviousLocator->getPrevious(),
+            'referenceCount'     => $this->referenceFetcher->getReferenceCountToEntity($page),
         ]);
+    }
+
+    protected function estimateReadingTimeMinutes(string $html): int
+    {
+        $text = trim(strip_tags(html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        preg_match_all('/[\p{L}\p{N}]+/u', $text, $matches);
+
+        return max(1, (int) ceil(count($matches[0]) / 200));
     }
 
     /**

@@ -58,6 +58,16 @@ class PageTest extends TestCase
         $this->withHtml($resp)->assertElementContains('.content-wrap button.screen-reader-only', 'Enter section select mode');
     }
 
+    public function test_page_show_includes_estimated_reading_time()
+    {
+        $page = $this->entities->page();
+        $page->html = '<p>' . str_repeat('word ', 401) . '</p>';
+        $page->save();
+
+        $resp = $this->asEditor()->get($page->getUrl());
+        $this->withHtml($resp)->assertElementContains('#page-details', '3 mins read');
+    }
+
     public function test_page_creation_with_markdown_content()
     {
         $this->setSettings(['app-editor' => 'markdown']);

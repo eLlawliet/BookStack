@@ -3,6 +3,11 @@
     <div class="blended-links">
         @include('entities.meta', ['entity' => $page, 'watchOptions' => $watchOptions])
 
+        <div class="entity-meta-item">
+            @icon('time')
+            <div>{{ trans_choice('entities.pages_reading_time', $readingTimeMinutes, ['minutes' => $readingTimeMinutes]) }}</div>
+        </div>
+
         @if($book->hasPermissions())
             <div class="active-restriction">
                 @if(userCan(\BookStack\Permissions\Permission::RestrictionsManage, $book))
