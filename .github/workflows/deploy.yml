@@ -104,8 +104,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=YOUR_PROJECT_KEY_HERE
-            -Dsonar.organization=YOUR_ORGANIZATION_HERE
+            -Dsonar.projectKey=eLlawliet_BookStack
+            -Dsonar.organization=ellawliet
             -Dsonar.php.coverage.reportPaths=coverage.xml
             -Dsonar.sources=app,config,routes
             -Dsonar.tests=tests
