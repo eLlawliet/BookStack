@@ -107,7 +107,7 @@ jobs:
             -Dsonar.projectKey=eLlawliet_BookStack
             -Dsonar.organization=ellawliet
             -Dsonar.php.coverage.reportPaths=coverage.xml
-            -Dsonar.sources=app,config,routes
+            -Dsonar.sources=app,routes
             -Dsonar.tests=tests
   # # ==========================================
   # # CONTINUOUS DEPLOYMENT (CD)
