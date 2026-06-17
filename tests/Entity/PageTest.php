@@ -283,4 +283,22 @@ class PageTest extends TestCase
 
         $resp->assertSessionHas('error', 'You do not have permission to access the requested page.');
     }
+
+    public function test_page_show_includes_word_count()
+    {
+        $page = $this->entities->page();
+        $page->html = '<p>' . str_repeat('word ', 150) . '</p>';
+        $page->save();
+        $resp = $this->asEditor()->get($page->getUrl());
+        $this->withHtml($resp)->assertElementContains('#page-details', '150 words');
+    }
+
+    public function test_page_show_word_count_singular()
+    {
+        $page = $this->entities->page();
+        $page->html = '<p>hello</p>';
+        $page->save();
+        $resp = $this->asEditor()->get($page->getUrl());
+        $this->withHtml($resp)->assertElementContains('#page-details', '1 word');
+    }
 }

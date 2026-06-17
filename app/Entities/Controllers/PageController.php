@@ -153,6 +153,7 @@ class PageController extends Controller
         $page->html = $pageContent->render();
         $pageNav = $pageContent->getNavigation($page->html);
         $readingTimeMinutes = $this->estimateReadingTimeMinutes($page->html);
+        $wordCount = $this->countWords($page->html);
 
         $sidebarTree = (new BookContents($page->book))->getTree();
         $commentTree = (new CommentTree($page));
@@ -169,6 +170,7 @@ class PageController extends Controller
             'commentTree'     => $commentTree,
             'pageNav'            => $pageNav,
             'readingTimeMinutes' => $readingTimeMinutes,
+            'wordCount' => $wordCount,
             'watchOptions'       => new UserEntityWatchOptions(user(), $page),
             'next'               => $nextPreviousLocator->getNext(),
             'previous'           => $nextPreviousLocator->getPrevious(),
@@ -183,6 +185,12 @@ class PageController extends Controller
 
         return max(1, (int) ceil(count($matches[0]) / 200));
     }
+
+    protected function countWords(string $html): int {
+    $text = trim(strip_tags(html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+    preg_match_all('/[\p{L}\p{N}]+/u', $text, $matches);
+    return count($matches[0]);
+}
 
     /**
      * Get a page from an ajax request.

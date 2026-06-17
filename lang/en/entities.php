@@ -230,6 +230,7 @@ return [
     'pages_attachments' => 'Attachments',
     'pages_navigation' => 'Page Navigation',
     'pages_reading_time' => ':minutes min read|:minutes mins read',
+    'pages_word_count' => '{1} 1 word|[2,*] :count words',
     'pages_delete' => 'Delete Page',
     'pages_delete_named' => 'Delete Page :pageName',
     'pages_delete_draft_named' => 'Delete Draft Page :pageName',

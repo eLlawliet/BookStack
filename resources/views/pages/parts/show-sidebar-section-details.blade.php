@@ -7,6 +7,10 @@
             @icon('time')
             <div>{{ trans_choice('entities.pages_reading_time', $readingTimeMinutes, ['minutes' => $readingTimeMinutes]) }}</div>
         </div>
+        <div class="entity-meta-item">
+            @icon('document')
+            <div>{{ trans_choice('entities.pages_word_count', $wordCount, ['count' => $wordCount]) }}</div>
+        </div>
 
         @if($book->hasPermissions())
             <div class="active-restriction">

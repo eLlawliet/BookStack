@@ -1,9 +1,9 @@
-name: Deploy BookStack to Azure CI/CD
+name: Feature highlights developments
 
 on:
   push:
     branches:
-      - pso
+      - feature-word-count
 jobs:
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
