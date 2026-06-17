@@ -23,7 +23,7 @@ The BookStack source is provided under the [MIT License](https://codeberg.org/bo
 The libraries used by, and included with, BookStack are provided under their own licenses and copyright.
 The licenses for many of our core dependencies can be found in the attribution list below, but this is not an exhaustive list of all projects used within BookStack. 
 
-## ![Git](https://shields.io) Git Push Rules
+## Git Push Rules
 
 ### 1. Clone this Repo
 Use bash or terminal to clone this repo
