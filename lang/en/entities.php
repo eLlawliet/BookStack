@@ -229,6 +229,7 @@ return [
     'pages_new' => 'New Page',
     'pages_attachments' => 'Attachments',
     'pages_navigation' => 'Page Navigation',
+    'pages_reading_time' => ':minutes min read|:minutes mins read',
     'pages_delete' => 'Delete Page',
     'pages_delete_named' => 'Delete Page :pageName',
     'pages_delete_draft_named' => 'Delete Draft Page :pageName',

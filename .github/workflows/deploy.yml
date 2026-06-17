@@ -1,4 +1,4 @@
-name: Testing sonarqube and coverage test
+name: Testing sonarqube and coverage test alongside feature
 
 on:
   push:
