@@ -1,9 +1,9 @@
-name: Deploy BookStack to Azure CI/CD
+name: Testing sonarqube and coverage test
 
 on:
   push:
     branches:
-      - pso
+      - sonarqube-test
 
 jobs:
 # ==========================================
@@ -32,11 +32,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          coverage: pcov
           extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
 
       - name: Install Dependencies
@@ -92,7 +95,20 @@ jobs:
           CACHE_DRIVER: array
           SESSION_DRIVER: array
           QUEUE_CONNECTION: sync
-        run: vendor/bin/phpunit --stop-on-failure
+        run: php artisan test --coverage-clover=coverage.xml
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=YOUR_PROJECT_KEY_HERE
+            -Dsonar.organization=YOUR_ORGANIZATION_HERE
+            -Dsonar.php.coverage.reportPaths=coverage.xml
+            -Dsonar.sources=app,config,routes
+            -Dsonar.tests=tests
   # ==========================================
   # CONTINUOUS DEPLOYMENT (CD)
   # ==========================================
