@@ -3,7 +3,7 @@ name: Git testing fix CI
 on:
   push:
     branches:
-      - feature-[template-work]
+      - feature-template-work
 
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
