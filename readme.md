@@ -92,6 +92,30 @@ After Fetching all branch you can check branch you want by using this command:
 ```
 git checkout [Name of branch]
 ```
+### 4. Working on branch
+open .github/workflows/testing.yml then change branches to branch name
+
+### 5. Testing CI
+```
+git add .
+git commit -m "message"
+git push origin feature-[name of feature]
+```
+Then check CI testing if all pass then merge with PSO
+
+### 6. Merging
+After testing delete testing.yml and then using this command to merge with pso branch:
+```
+git checkout pso
+git merge origin/feature-[name of feature]
+```
+Then when the merge finish push pso branch use this command:
+```
+git add .
+git commit -m "feat: [name of feature]
+git push origin pso
+```
+when CI/CD finish deleted feature-[name of feature] branch
 
 ## Commit Message Convention 
 ### Format
