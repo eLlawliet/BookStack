@@ -94,16 +94,3 @@ on:
           SESSION_DRIVER: array
           QUEUE_CONNECTION: sync
         run: php artisan test --coverage-clover=coverage.xml
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=eLlawliet_BookStack
-            -Dsonar.organization=ellawliet
-            -Dsonar.php.coverage.reportPaths=coverage.xml
-            -Dsonar.sources=app,routes
-            -Dsonar.tests=tests
