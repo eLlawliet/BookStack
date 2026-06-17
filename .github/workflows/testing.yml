@@ -108,52 +108,52 @@ on:
             -Dsonar.php.coverage.reportPaths=coverage.xml
             -Dsonar.sources=app,routes
             -Dsonar.tests=tests
-  # # ==========================================
-  # # CONTINUOUS DEPLOYMENT (CD)
-  # # ==========================================
-  # cd-deployment:
-  #   name: Deploy to Azure
-  #   needs: ci-testing
-  #   if: always()
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Verify CI Passed
-  #       run: |
-  #         if [ "${{ needs.ci-testing.result }}" != "success" ]; then
-  #           echo "❌ ERROR: Continuous Integration (CI) tests failed!"
-  #           echo "🛑 Aborting Continuous Deployment (CD) to protect the live server."
-  #           exit 1
-  #         fi
-  #         echo "✅ CI passed! Proceeding with deployment..."
+  # ==========================================
+  # CONTINUOUS DEPLOYMENT (CD)
+  # ==========================================
+  cd-deployment:
+    name: Deploy to Azure
+    needs: ci-testing
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify CI Passed
+        run: |
+          if [ "${{ needs.ci-testing.result }}" != "success" ]; then
+            echo "❌ ERROR: Continuous Integration (CI) tests failed!"
+            echo "🛑 Aborting Continuous Deployment (CD) to protect the live server."
+            exit 1
+          fi
+          echo "✅ CI passed! Proceeding with deployment..."
 
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  #     - name: Setup PHP
-  #       uses: shivammathur/setup-php@v2
-  #       with:
-  #         php-version: '8.2'
-  #         extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, pdo_mysql, gd, iconv, tokenizer, zip
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-  #     - name: Build Frontend Assets
-  #       run: |
-  #         npm install
-  #         npm run build
+      - name: Build Frontend Assets
+        run: |
+          npm install
+          npm run build
 
-  #     - name: Optimize for Production
-  #       run: composer install --no-dev --optimize-autoloader
+      - name: Optimize for Production
+        run: composer install --no-dev --optimize-autoloader
 
-  #     - name: Package Application
-  #       run: zip -r release.zip . -x "*.git*" "tests/*" "node_modules/*"
+      - name: Package Application
+        run: zip -r release.zip . -x "*.git*" "tests/*" "node_modules/*"
 
-  #     - name: Deploy to Azure App Service
-  #       uses: azure/webapps-deploy@v2
-  #       with:
-  #         app-name: 'bookstack-project-pso'
-  #         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-  #         package: release.zip
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'bookstack-project-pso'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: release.zip
