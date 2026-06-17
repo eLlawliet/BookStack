@@ -1,10 +1,10 @@
-name: Feature highlights developments
+name: Git testing fix CI
 
 on:
   push:
     branches:
-      - feature-word-count
-jobs:
+      - feature-[template-work]
+
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
   # ==========================================
