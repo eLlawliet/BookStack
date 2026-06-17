@@ -1,10 +1,9 @@
-name: Testing sonarqube and coverage test alongside feature
+name: Deploy BookStack to Azure CI/CD
 
 on:
   push:
     branches:
-      - sonarqube-test
-
+      - pso
 jobs:
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
