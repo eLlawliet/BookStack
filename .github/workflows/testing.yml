@@ -1,5 +1,4 @@
-name: Git testing fix CI
-
+name: Git feature testing
 on:
   push:
     branches:
