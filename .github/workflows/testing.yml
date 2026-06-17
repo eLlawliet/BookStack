@@ -4,9 +4,10 @@ on:
     branches:
       - feature-template-work
 
+jobs:
 # ==========================================
-  # CONTINUOUS INTEGRATION (CI)
-  # ==========================================
+# CONTINUOUS INTEGRATION (CI)
+# ==========================================
   ci-testing:
     name: Run Automated Tests
     runs-on: ubuntu-latest
