@@ -68,10 +68,26 @@ after you push you can press create & compare pull request or you can follow thi
 ### 1. Fetching all branch
 Open your terminal and go inside volun-web folder then use this command:
 ```
-git pull origin master
+git pull origin pso
 git fetch origin
 ```
 ### 2. Checkout the branch
+After Fetching all branch you can check branch you want by using this command:
+```
+git checkout [Name of branch]
+```
+
+## Working on new feature
+### 1. Create new branch
+Use branches and click new branch, input name branch using format feature-[Name of feature]. Source use branch feature-template-work then click create new branch
+
+### 2. Fetching all branch
+Open your terminal and go inside volun-web folder then use this command:
+```
+git pull origin pso
+git fetch origin
+```
+### 3. Checkout the branch
 After Fetching all branch you can check branch you want by using this command:
 ```
 git checkout [Name of branch]
