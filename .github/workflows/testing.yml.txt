@@ -1,9 +1,10 @@
-name: Deploy BookStack to Azure CI/CD
+name: Git testing fix CI
+
 on:
   push:
     branches:
-      - pso
-jobs:
+      - feature-word-count
+
 # ==========================================
   # CONTINUOUS INTEGRATION (CI)
   # ==========================================
