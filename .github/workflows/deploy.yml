@@ -5,8 +5,8 @@ on:
       - pso
 jobs:
 # ==========================================
-  # CONTINUOUS INTEGRATION (CI)
-  # ==========================================
+# CONTINUOUS INTEGRATION (CI)
+# ==========================================
   ci-testing:
     name: Run Automated Tests
     runs-on: ubuntu-latest
