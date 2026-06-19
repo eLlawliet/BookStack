@@ -1,4 +1,4 @@
-name: Testing sonarqube and coverage test alongside feature
+name: Deploy Bookstack to Azure CI/CD
 
 on:
   push:
