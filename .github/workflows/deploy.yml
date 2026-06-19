@@ -1,15 +1,12 @@
-name: Deploy Bookstack to Azure CI/CD
-
+name: Deploy BookStack to Azure CI/CD
 on:
   push:
     branches:
       - pso
-
-
 jobs:
-# ===========================================
-# CONTINUOUS INTEGRATION (CI)
-# ===========================================
+# ==========================================
+  # CONTINUOUS INTEGRATION (CI)
+  # ==========================================
   ci-testing:
     name: Run Automated Tests
     runs-on: ubuntu-latest
