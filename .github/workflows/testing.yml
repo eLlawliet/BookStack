@@ -2,7 +2,7 @@ name: Git feature testing
 on:
   push:
     branches:
-      - feature-template-work
+      - feature-readingbar
 
 jobs:
 # ==========================================

@@ -301,4 +301,17 @@ class PageTest extends TestCase
         $resp = $this->asEditor()->get($page->getUrl());
         $this->withHtml($resp)->assertElementContains('#page-details', '1 word');
     }
+
+    public function test_page_view_contains_selector_for_reading_progress()
+    {
+        $page = $this->entities->page();
+        $page->html = '<p>' . str_repeat('Konten panjang untuk testing scroll. ', 50) . '</p>';
+        $page->save();
+
+        $resp = $this->asEditor()->get($page->getUrl());
+
+        $resp->assertStatus(200);
+
+        $this->withHtml($resp)->assertElementExists('.page-content');
+    }
 }
