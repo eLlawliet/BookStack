@@ -5,9 +5,9 @@ on:
       - feature-readingbar
 
 jobs:
-# ==========================================
+# ===========================================
 # CONTINUOUS INTEGRATION (CI)
-# ==========================================
+# ===========================================
   ci-testing:
     name: Run Automated Tests
     runs-on: ubuntu-latest
